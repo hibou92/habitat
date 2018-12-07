@@ -1,0 +1,12 @@
+name = TM Views Roundabout
+description = "Provides a views style plugin to integrate the jQuery Roundabout module."
+core = 7.x
+package = TM Framework
+version = "7.x-1.0"
+
+dependencies[] = views
+dependencies[] = tm_font_awesome
+
+
+files[] = tm_views_roundabout.views.inc
+files[] = tm_views_roundabout_style_plugin.inc

@@ -1,0 +1,10 @@
+name = TM Masonry Grid
+description = "Adds TM Masonry grid view."
+core = 7.x
+package = TM Framework
+version = "7.x-1.0"
+dependencies[] = views
+dependencies[] = jquery_update
+
+files[] = tm_masonry.views.inc
+files[] = tm_masonry_plugin_style_masonry.inc

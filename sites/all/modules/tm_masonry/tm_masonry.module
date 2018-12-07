@@ -1,0 +1,113 @@
+<?php
+
+/*
+ * Implement hook_menu
+ */
+
+function tm_masonry_menu() {
+	$items = array();
+	$items['tm/tm_masonry/save/%/%/%/%'] = array(
+		'title' => 'TM Masonry Grid Settings',
+		'page callback' => 'tm_masonry_save',
+		'page arguments' => array( 3, 4, 5, 6 ),
+		'access arguments' => array( 'administer tm masonry' ),
+		'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+function tm_masonry_save( $view, $item, $width, $height ) {
+	$result = db_select( 'tm_masonry', 'm' )
+					->fields( 'm' )
+					->condition( 'view', $view, '=' )
+					->condition( 'item', $item, '=' )
+					->execute()
+					->fetchAssoc();
+	if ( $result ) {
+		db_update( 'tm_masonry' )
+					->fields( array(
+						'width' => $width,
+						'height' => $height,
+					) )
+					->condition( 'view', $view, '=' )
+					->condition( 'item', $item, '=' )
+					->execute();
+	} else {
+		db_insert( 'tm_masonry' )
+					->fields( array(
+						'view' => $view,
+						'item' => $item,
+						'width' => $width,
+						'height' => $height,
+					) )
+					->execute();
+	}
+	return t( 'TM Masonry saved' );
+}
+
+/*
+ * Implements hook_views_api
+ */
+
+function tm_masonry_views_api() {
+	return array(
+		'api' => 3,
+	);
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function tm_masonry_preprocess_node( &$vars ) {
+	$node = $vars['node'];
+	if ( isset( $vars['view'] ) && isset( $vars['view']->style_plugin ) && $vars['view']->style_plugin->plugin_name == 'tm_masonry' ) {
+		$vars['theme_hook_suggestion'] = 'node__' . $node->type . '__' . $vars['view_mode'] . '__tm_masonry';
+		$view = $vars['view'];
+		$options = $view->style_options;
+		if ( isset( $options['tm_masonry']['grid_filter_vocabulary'] ) ) {
+			$terms = _tm_masonry_node_get_term( $view->style_options['tm_masonry']['grid_filter_vocabulary'], $node->nid );
+			if ( !empty( $terms ) ) {
+				foreach ( $terms as $term ) {
+					$vars['classes_array'][] = drupal_html_class( $term->name );
+				}
+			}
+		}
+	}
+}
+
+function _tm_masonry_node_get_term( $vid, $nid ) {
+	$results = db_query( 'select t.tid FROM {taxonomy_index} t LEFT JOIN {taxonomy_term_data} tt ON t.tid = tt.tid WHERE t.nid = :nid AND tt.vid = :vid', array( ':vid' => $vid, ':nid' => $nid ) );
+	$terms = array();
+	foreach ( $results as $result ) {
+		$terms[] = taxonomy_term_load( $result->tid );
+	}
+	return $terms;
+}
+
+function tm_masonry_size( $view, $item ) {
+	$result = db_select( 'tm_masonry', 'm' )
+					->fields( 'm' )
+					->condition( 'view', $view, '=' )
+					->condition( 'item', $item, '=' )
+					->execute()
+					->fetchAssoc();
+	if ( $result ) {
+		return array(
+			'width' => $result['width'],
+			'height' => $result['height'],
+		);
+	}
+	return array( 'width' => 1, 'height' => 1 );
+}
+
+/**
+ * Implements hook_permission()
+ */
+function tm_masonry_permission() {
+	return array(
+		'administer tm masonry' => array(
+			'title' => t( 'Administer TM Masonry' ),
+			'description' => t( 'Administer TM Masonry Grid.' ),
+		),
+	);
+}

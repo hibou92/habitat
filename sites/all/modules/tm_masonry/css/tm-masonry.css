@@ -1,0 +1,17 @@
+.tm-masonry {
+	position: relative;
+}
+.tm-masonry-item > .ui-resizable-handle.ui-icon {
+	background-color: rgba(255, 255, 255, 0.6);
+}
+.tm-masonry-item > div:not(.ui-resizable-handle) {
+	height: 100%;
+	overflow: hidden;
+	width: 100%;
+}
+
+.tm-masonry-item {
+	background: #fff;
+	text-align: center;
+	vertical-align: middle;
+}

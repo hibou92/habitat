@@ -1,0 +1,54 @@
+/* default css */
+.roundabout-holder {
+	height: 205px;
+	position: relative;
+}
+
+.tm-views-roundabout {
+	border: 1px solid #ccc;
+	background-color: #fff;
+	height: 205px;
+	width: 400px;
+	overflow: hidden;
+}
+
+#roundabout-prev,
+#roundabout-next {
+	color: transparent;
+	cursor: pointer;
+	font-size: 0;
+	line-height: 0;
+	margin-top: -20px;
+	position: absolute;
+	text-decoration: none;
+	top: 50%;
+	z-index: 9999;
+}
+
+#roundabout-prev:after,
+#roundabout-next:after {
+	color: #000000;
+	font-family: FontAwesome;
+	font-size: 40px;
+	line-height: 40px;
+	opacity: 0.5;
+}
+	
+#roundabout-prev:hover:after,
+#roundabout-next:hover:after {
+	opacity: 1;
+}
+
+#roundabout-prev {
+	left: 0;
+}
+#roundabout-prev:after {
+	content: "\f053";
+}
+
+#roundabout-next {
+	right: 0;
+}
+#roundabout-next:after {
+	content: "\f054";
+}
